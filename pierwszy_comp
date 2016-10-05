@@ -1,0 +1,38 @@
+1 7 -8 * +
+a =
+xy =
+a xy +
+
+jedna linijka na instrukcje
+
+leksemy - liczby,
+LConst
+LIdent
+LEq
+LPlus
+LMinus
+LStar
+LSlash
+LProcent
+
+AST nodes
+Prog
+StmtExp {exp}
+
+StmtAss {ident, exp}
+
+ExpAdd { left, right}
+	Sub
+	Mul
+	Div
+	Mod
+
+
+ExpConst {value}
+ExpVarRef {name}
+
+analizator semantyczny!!!!
+mapowanie zmiennych a -> slot _
+sprawdzic czy nie ma odwolania do niezainicjalizowanej zmiennej
+
+!!!Po tym dostaniemy AST i tablice
