@@ -1,22 +1,25 @@
 import java.util.List;
 
-import interfaces.Lexem;
-import static org.junit.Assert.*;
+import excercises1.Frontend1;
+import interfaces.*;
 
 public class Compilator {
 	
-	public static String program = "1 7 - 0 *";
-	public static String result = "[LConst [value=1], LConst [value=7], LMinus, LConst [value=0], LStar]";
-	
 	private static LexicalAnalyzer lexicalAnalyzer;
+	private static SemanticAnalyzer semanticAnalyzer;
+	private static SyntaxAnalyzer syntaxAnalyzer;
+
+	private static Frontend frontend;
 	
 	public static void main(String[] args) {
-		lexicalAnalyzer = new LexicalAnalyzer();
-		
-		List<Lexem> lexems = lexicalAnalyzer.tokenize(program);
-		
-		Assert.assertEqual(lexems, result);
-		
+		frontend = new Frontend1();
+
+		lexicalAnalyzer = frontend.getLexicalAnalyzer();
+		semanticAnalyzer = frontend.getSemanticAnalyzer();
+		syntaxAnalyzer = frontend.getSyntaxAnalyzer();
+
+//		List<Lexem> lexems = lexicalAnalyzer.tokenize(program);
+
 	}
 	
 	

@@ -1,14 +1,19 @@
+package excercises1;
+
 import java.util.LinkedList;
 import java.util.List;
 
 import Lexems.*;
 import interfaces.Lexem;
+import interfaces.LexicalAnalyzer;
 
 
-public class LexicalAnalyzer {
-	List<Lexem> tokenize(String... lines) {
-		List<Lexem> lexems = new LinkedList<Lexem>();
-		String[] words = null;
+class LexicalAnalyzer1 implements LexicalAnalyzer {
+
+	@Override
+	public List<Lexem> tokenize(String... lines) {
+		List<Lexem> lexems = new LinkedList<>();
+		String[] words;
 		
 		for(String line : lines) {
 			words = line.split(" ");
@@ -31,14 +36,13 @@ public class LexicalAnalyzer {
 					lexems.add(new LIdent(word));
 				}
 			}
+			lexems.add(new LEOL());
 		}
+		lexems.add(new LEOF());
 		return lexems;
 	}
 
 	private boolean isNumber(String word) {
-		if (word.matches("^-?\\d+$")) {
-			return true;
-		}
-		return false;
+		return word.matches("^-?\\d+$");
 	}
 }

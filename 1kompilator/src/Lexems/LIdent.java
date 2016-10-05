@@ -15,6 +15,6 @@ public class LIdent implements Lexem {
 
 	@Override
 	public String toString() {
-		return "LIdent [name=" + name + "]";
+		return "LIdent " + name;
 	}
 }

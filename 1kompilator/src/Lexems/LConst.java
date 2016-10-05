@@ -19,7 +19,7 @@ public class LConst implements Lexem {
 
 	@Override
 	public String toString() {
-		return "LConst [value=" + value + "]";
+		return "LConst " + value;
 	}
 
 }
