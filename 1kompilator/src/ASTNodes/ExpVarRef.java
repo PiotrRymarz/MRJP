@@ -4,7 +4,7 @@ import interfaces.ASTNode;
 
 import java.util.List;
 
-class ExpVarRef implements ASTNode {
+public class ExpVarRef implements ASTNode {
     private String variable;
 
     public ExpVarRef(String variable) {

@@ -5,13 +5,17 @@ import java.util.List;
 
 import interfaces.ASTNode;
 
-class ExpSub implements ASTNode {
+public class ExpSub implements ASTNode {
 	private List<ASTNode> args;
 	
 	public ExpSub(ASTNode var1, ASTNode var2) {
 		args = new ArrayList<>();
 		args.add(var1);
 		args.add(var2);
+	}
+
+	public ExpSub() {
+
 	}
 
 	public List<ASTNode> getChildren() {

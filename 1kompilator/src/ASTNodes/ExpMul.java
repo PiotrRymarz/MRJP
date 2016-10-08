@@ -8,8 +8,16 @@ import java.util.List;
 public class ExpMul implements ASTNode {
     private List<ASTNode> args;
 
+    public ExpMul () {
+    }
+
     public ExpMul(ASTNode var1, ASTNode var2) {
         args = new ArrayList<>();
+        setChildren(var1, var2);
+    }
+
+    public void setChildren(ASTNode var1, ASTNode var2) {
+        args.clear();
         args.add(var1);
         args.add(var2);
     }

@@ -5,13 +5,17 @@ import interfaces.ASTNode;
 import java.util.ArrayList;
 import java.util.List;
 
-class ExpDiv implements ASTNode {
+public class ExpDiv implements ASTNode {
     private List<ASTNode> args;
 
     public ExpDiv(ASTNode var1, ASTNode var2) {
         args = new ArrayList<>();
         args.add(var1);
         args.add(var2);
+    }
+
+    public ExpDiv() {
+
     }
 
     public List<ASTNode> getChildren() {

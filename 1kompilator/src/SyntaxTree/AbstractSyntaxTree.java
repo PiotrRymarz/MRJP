@@ -1,4 +1,4 @@
-package AST;
+package SyntaxTree;
 
 import ASTNodes.Program;
 import interfaces.AST;

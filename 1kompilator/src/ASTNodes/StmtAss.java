@@ -5,7 +5,7 @@ import java.util.List;
 
 import interfaces.ASTNode;
 
-class StmtAss implements ASTNode {
+public class StmtAss implements ASTNode {
 	
 	private List<ASTNode> params;
 	
@@ -14,6 +14,10 @@ class StmtAss implements ASTNode {
 		params.add(var);
 		params.add(exp);
 	}
+
+    public StmtAss() {
+
+    }
 
 	public List<ASTNode> getChildren() {
 		return params;

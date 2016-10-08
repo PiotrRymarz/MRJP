@@ -1,7 +1,9 @@
 package interfaces;
 
+import SyntaxTree.SyntaxParsingResult;
+
 import java.util.List;
 
 public interface SyntaxAnalyzer {
-    AST getAST(List<Lexem> lexems);
+    SyntaxParsingResult getParsingResult(List<Lexem> lexems);
 }

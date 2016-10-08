@@ -5,7 +5,7 @@ import interfaces.ASTNode;
 import java.util.LinkedList;
 import java.util.List;
 
-class ExpMod implements ASTNode {
+public class ExpMod implements ASTNode {
     private List<ASTNode> args;
 
     public ExpMod(ASTNode var1, ASTNode var2) {

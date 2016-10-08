@@ -5,7 +5,7 @@ import java.util.List;
 
 import interfaces.ASTNode;
 
-class StmtExp implements ASTNode {
+public class StmtExp implements ASTNode {
 	
 	private List<ASTNode> exp;
 	
