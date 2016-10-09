@@ -1,7 +1,6 @@
 package excercises1;
 
 import ASTNodes.*;
-import Lexems.*;
 import SyntaxTree.AbstractSyntaxTree;
 import SyntaxTree.SymbolicTable;
 import SyntaxTree.SyntaxParsingResult;
@@ -20,6 +19,11 @@ class SyntaxAnalyzer1 implements SyntaxAnalyzer {
     private Stack<ASTNode> stack;
     private Operations lastOperation;
     private SymbolicTable symbolicTable;
+    private HelperClassChecker helper;
+
+    public SyntaxAnalyzer1() {
+        this.helper = new HelperClassChecker();
+    }
 
     @Override
     public SyntaxParsingResult getParsingResult(List<Lexem> lexems) {
@@ -29,37 +33,37 @@ class SyntaxAnalyzer1 implements SyntaxAnalyzer {
         symbolicTable = new SymbolicTable();
 
         for (Lexem lexem : lexems) {
-            if (isConst(lexem)) {
+            if (helper.isLConst(lexem)) {
                 stack.add(new ExpConst(Integer.parseInt(lexem.getValue())));
-            } else if (isPlus(lexem)) {
+            } else if (helper.isLPlus(lexem)) {
                 if (lastOperation.equals(Operations.STAR) || lastOperation.equals(Operations.SLASH)) {
                     lastOperation = reduceMultiplicative(stack);
                 }
                 stack.add(new ExpAdd());
                 lastOperation = Operations.PLUS;
-            } else if (isMinux(lexem)) {
+            } else if (helper.isLMinus(lexem)) {
                 if (lastOperation.equals(Operations.STAR) || lastOperation.equals(Operations.SLASH)) {
                     lastOperation = reduceMultiplicative(stack);
                 }
                 stack.add(new ExpSub());
                 lastOperation = Operations.MINUS;
-            } else if (isStar(lexem)) {
+            } else if (helper.isLStar(lexem)) {
                 stack.add((new ExpMul()));
                 lastOperation = Operations.STAR;
-            } else if (isSlash(lexem)) {
+            } else if (helper.isLSlash(lexem)) {
                 stack.add((new ExpDiv()));
                 lastOperation = Operations.STAR;
-            } else if (isIdent(lexem)) {
+            } else if (helper.isLIdent(lexem)) {
                 if(!symbolicTable.contains(lexem.getValue())) {
                     symbolicTable.insertKey(lexem.getValue(), symbolicTable.size());
                 }
                 stack.add(new ExpVarRef(lexem.getValue()));
-            } else if (isEq(lexem)) {
+            } else if (helper.isLEq(lexem)) {
                 stack.add(new StmtAss());
                 lastOperation = Operations.ASSIGNMENT;
-            } else if (isEOL(lexem)) {
+            } else if (helper.isLEOL(lexem)) {
                 reduceStmt(stack, stmts);
-            } else if (isEOF(lexem)) {
+            } else if (helper.isLEOF(lexem)) {
                 return new SyntaxParsingResult(
                         new AbstractSyntaxTree(stmts),
                         symbolicTable
@@ -102,7 +106,7 @@ class SyntaxAnalyzer1 implements SyntaxAnalyzer {
             ASTNode second = stack.pop();
             ASTNode third = stack.pop();
 
-            if (isAssign(second)) {
+            if (helper.isAssign(second)) {
                 stack.add(new StmtAss(third, first));
             }
         } else if (stack.size() == 1) {
@@ -129,10 +133,10 @@ class SyntaxAnalyzer1 implements SyntaxAnalyzer {
                 second = stack.pop();
 
 
-            if(isAdd(second)) {
+            if(helper.isAdd(second)) {
                 third = stack.pop();
                 stack.push(new ExpAdd(third, first));
-            } else if (isSub(second)) {
+            } else if (helper.isSub(second)) {
                 third = stack.pop();
                 stack.push(new ExpSub(third, first));
             } else {
@@ -158,23 +162,23 @@ class SyntaxAnalyzer1 implements SyntaxAnalyzer {
             first = stack.pop();
             second = stack.pop();
 
-            if(isMul(second)) {
+            if(helper.isMul(second)) {
                 third = stack.pop();
                 stack.push(new ExpMul(third, first));
-            } else if (isDiv(second)) {
+            } else if (helper.isDiv(second)) {
                 third = stack.pop();
                 stack.push(new ExpDiv(third, first));
-            } else if (isAdd(second)) {
+            } else if (helper.isAdd(second)) {
                 stack.push(second);
                 stack.push(first);
 
                 return Operations.PLUS;
-            } else if (isSub(second)) {
+            } else if (helper.isSub(second)) {
                 stack.push(second);
                 stack.push(first);
 
                 return Operations.MINUS;
-            } else if (isAssign(second)) {
+            } else if (helper.isAssign(second)) {
                 stack.push(second);
                 stack.push(first);
 
@@ -185,64 +189,5 @@ class SyntaxAnalyzer1 implements SyntaxAnalyzer {
         return Operations.EMPTY;
     }
 
-    private boolean isSub(ASTNode node) {
-            return isClass(node, ExpSub.class);
-    }
 
-    private boolean isAssign(ASTNode node) {
-        return isClass(node, StmtAss.class);
-    }
-
-    private boolean isDiv(ASTNode node) {
-        return isClass(node, ExpDiv.class);
-    }
-
-    private boolean isClass(Object test, Class c) {
-        return test.getClass().equals(c);
-    }
-
-    private boolean isAdd(ASTNode node) {
-        return isClass(node, ExpAdd.class);
-    }
-
-    private boolean isMul(ASTNode node) {
-        return isClass(node, ExpMul.class);
-    }
-
-    private boolean isEOF(Lexem lexem) {
-        return isClass(lexem, LEOF.class);
-    }
-
-    private boolean isEOL(Lexem lexem) {
-        return isClass(lexem, LEOL.class);
-    }
-
-    private boolean isStar(Lexem lexem) {
-        return isClass(lexem, LStar.class);
-    }
-
-    private boolean isSlash(Lexem lexem) {
-        return isClass(lexem, LSlash.class);
-    }
-
-    private boolean isPlus(Lexem lexem) {
-        return isClass(lexem, LPlus.class);
-    }
-
-    private boolean isConst(Lexem lexem) {
-        return isClass(lexem, LConst.class);
-    }
-
-    private boolean isMinux(Lexem lexem) {
-        return isClass(lexem, LMinus.class);
-    }
-
-    private boolean isEq(Lexem lexem) {
-        return isClass(lexem, LEq.class);
-    }
-
-    private boolean isIdent(Lexem lexem) {
-        return isClass(lexem, LIdent.class);
-
-    }
 }

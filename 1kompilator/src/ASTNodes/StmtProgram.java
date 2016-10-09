@@ -4,11 +4,15 @@ import java.util.List;
 
 import interfaces.ASTNode;
 
-public class Program implements ASTNode {
-	private List<ASTNode> statements;
+public class StmtProgram implements ASTNode {
+	protected List<ASTNode> statements;
 	
-	public Program(List<ASTNode> statements) {
+	public StmtProgram(List<ASTNode> statements) {
 		this.statements = statements;
+	}
+
+	public StmtProgram() {
+
 	}
 
 	public List<ASTNode> getChildren() {
@@ -20,7 +24,7 @@ public class Program implements ASTNode {
 		if (this == o) return true;
 		if (o == null || getClass() != o.getClass()) return false;
 
-		Program program = (Program) o;
+		StmtProgram program = (StmtProgram) o;
 
 		return statements != null ? statements.equals(program.statements) : program.statements == null;
 

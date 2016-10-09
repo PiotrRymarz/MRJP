@@ -1,22 +1,21 @@
 package SyntaxTree;
 
-import ASTNodes.Program;
+import ASTNodes.StmtProgram;
 import interfaces.AST;
 import interfaces.ASTNode;
 
 import java.util.Iterator;
 import java.util.List;
 
-public class AbstractSyntaxTree implements AST, Iterable<ASTNode> {
+public class AbstractSyntaxTree implements AST {
     private ASTNode root;
 
     public AbstractSyntaxTree(List<ASTNode> stmts) {
-        root = new Program(stmts);
+        root = new StmtProgram(stmts);
     }
 
-    @Override
-    public Iterator<ASTNode> iterator() {
-        return null;
+    public ASTNode getProgram() {
+        return root;
     }
 
     @Override

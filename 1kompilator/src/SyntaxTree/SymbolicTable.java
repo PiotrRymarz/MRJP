@@ -18,6 +18,10 @@ public class SymbolicTable {
         symbols.put(name, value);
     }
 
+    public Integer getValue(String key) {
+        return symbols.get(key);
+    }
+
     public Integer size() {
         return symbols.size();
     }

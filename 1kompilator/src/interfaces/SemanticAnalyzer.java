@@ -1,5 +1,8 @@
 package interfaces;
 
+import SemanticTree.AnnotatedAbstractSyntaxTree;
+import SyntaxTree.SyntaxParsingResult;
+
 public interface SemanticAnalyzer {
-    Program getProgram(AST ast);
+    AnnotatedAbstractSyntaxTree getAnnotatedAST(SyntaxParsingResult syntaxParsingResult);
 }

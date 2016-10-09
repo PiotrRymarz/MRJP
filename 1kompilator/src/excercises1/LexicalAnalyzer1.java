@@ -11,9 +11,10 @@ import interfaces.LexicalAnalyzer;
 class LexicalAnalyzer1 implements LexicalAnalyzer {
 
 	@Override
-	public List<Lexem> tokenize(String... lines) {
+	public List<Lexem> tokenize(String input) {
 		List<Lexem> lexems = new LinkedList<>();
 		String[] words;
+		String[] lines = input.split(System.lineSeparator());
 		
 		for(String line : lines) {
 			words = line.split(" ");
