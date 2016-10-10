@@ -14,6 +14,10 @@ public class ExpMod implements ASTNode {
         args.add(var2);
     }
 
+    public ExpMod() {
+
+    }
+
     public List<ASTNode> getChildren() {
         return args;
     }

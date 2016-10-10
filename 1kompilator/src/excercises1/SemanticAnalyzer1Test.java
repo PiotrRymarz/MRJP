@@ -2,8 +2,8 @@ package excercises1;
 
 import ASTNodes.*;
 import AnnotatedASTNodes.*;
-import Lexems.*;
 import SemanticTree.AnnotatedAbstractSyntaxTree;
+import SemanticTree.SemanticParsingResult;
 import SyntaxTree.AbstractSyntaxTree;
 import SyntaxTree.SymbolicTable;
 import SyntaxTree.SyntaxParsingResult;
@@ -15,7 +15,6 @@ import org.testng.annotations.Test;
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.testng.Assert.*;
 import static org.testng.AssertJUnit.assertTrue;
 
 public class SemanticAnalyzer1Test {
@@ -71,9 +70,10 @@ public class SemanticAnalyzer1Test {
 
         syntaxParsingResult = new SyntaxParsingResult(abstractTree, symbolicTable);
 
-        AnnotatedAbstractSyntaxTree result = semanticAnalyzer.getAnnotatedAST(syntaxParsingResult);
-        assertTrue(result.equals(expectedResult));
-        assertTrue(result.getHeight() == 4);
+        SemanticParsingResult result = semanticAnalyzer.getSemanticResult(syntaxParsingResult);
+        AnnotatedAST resultTree = result.getAnnotatedAST();
+        assertTrue(resultTree.equals(expectedResult));
+        assertTrue(resultTree.getHeight() == 4);
 
     }
 
@@ -126,9 +126,90 @@ public class SemanticAnalyzer1Test {
 
         syntaxParsingResult = new SyntaxParsingResult(abstractTree, symbolicTable);
 
-        AnnotatedAbstractSyntaxTree result = semanticAnalyzer.getAnnotatedAST(syntaxParsingResult);
-        assertTrue(result.equals(expectedResult));
-        assertTrue(result.getHeight() == 4);
+        SemanticParsingResult result = semanticAnalyzer.getSemanticResult(syntaxParsingResult);
+
+        AnnotatedAbstractSyntaxTree resultTree = result.getAnnotatedAST();
+        assertTrue(resultTree.equals(expectedResult));
+        assertTrue(resultTree.getHeight() == 4);
+    }
+
+    /**
+     * SyntaxTree for
+     *  a = 1
+     *  a + 1 + 2 * 3 - 4 / 5 % 6
+     */
+    @Test
+    public void checkAnnotatedAST3() {
+        annotatedStmts.add(
+                new StmtAssAnnotated(
+                        new ExpVarRefAnnotated("a"),
+                        new ExpConstAnnotated(1)
+                )
+        );
+        annotatedStmts.add(
+                new StmtExpAnnotated(
+                        new ExpAddAnnotated(
+                                new ExpVarRefAnnotated("a"),
+                                new ExpAddAnnotated(
+                                        new ExpConstAnnotated(1),
+                                        new ExpSubAnnotated(
+                                                new ExpMulAnnotated(
+                                                        new ExpConstAnnotated(2),
+                                                        new ExpConstAnnotated(3)
+                                                ),
+                                                new ExpDivAnnotated(
+                                                        new ExpConstAnnotated(4),
+                                                        new ExpModAnnotated(
+                                                                new ExpConstAnnotated(5),
+                                                                new ExpConstAnnotated(6)
+                                                        )
+                                                )
+                                        )
+                                )
+                        )
+                )
+        );
+        expectedResult = new AnnotatedAbstractSyntaxTree(annotatedStmts);
+
+        stmts.add(
+                new StmtAss(
+                        new ExpVarRef("a"),
+                        new ExpConst(1)
+                )
+        );
+        stmts.add(
+                new StmtExp(
+                        new ExpAdd(
+                                new ExpVarRef("a"),
+                                new ExpAdd(
+                                        new ExpConst(1),
+                                        new ExpSub(
+                                                new ExpMul(
+                                                        new ExpConst(2),
+                                                        new ExpConst(3)
+                                                ),
+                                                new ExpDiv(
+                                                        new ExpConst(4),
+                                                        new ExpMod(
+                                                                new ExpConst(5),
+                                                                new ExpConst(6)
+                                                        )
+                                                )
+                                        )
+                                )
+                        )
+                )
+        );
+        abstractTree = new AbstractSyntaxTree(stmts);
+        symbolicTable.insertKey("a", 0);
+
+        syntaxParsingResult = new SyntaxParsingResult(abstractTree, symbolicTable);
+
+        SemanticParsingResult result = semanticAnalyzer.getSemanticResult(syntaxParsingResult);
+
+        AnnotatedAbstractSyntaxTree resultTree = result.getAnnotatedAST();
+        assertTrue(resultTree.equals(expectedResult));
+        assertTrue(resultTree.getHeight() == 7);
     }
 
     //a+2
@@ -147,7 +228,7 @@ public class SemanticAnalyzer1Test {
 
         syntaxParsingResult = new SyntaxParsingResult(abstractTree, symbolicTable);
 
-        AnnotatedAbstractSyntaxTree result = semanticAnalyzer.getAnnotatedAST(syntaxParsingResult);
+        SemanticParsingResult result = semanticAnalyzer.getSemanticResult(syntaxParsingResult);
     }
 
     //a+2
@@ -165,6 +246,6 @@ public class SemanticAnalyzer1Test {
 
         syntaxParsingResult = new SyntaxParsingResult(abstractTree, symbolicTable);
 
-        AnnotatedAbstractSyntaxTree result = semanticAnalyzer.getAnnotatedAST(syntaxParsingResult);
+        SemanticParsingResult result = semanticAnalyzer.getSemanticResult(syntaxParsingResult);
     }
 }

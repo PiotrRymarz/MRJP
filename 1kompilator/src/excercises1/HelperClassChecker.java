@@ -45,6 +45,10 @@ class HelperClassChecker {
         return isClass(node, ExpConst.class);
     }
 
+    public boolean isModulo(ASTNode node) {
+        return isClass(node, ExpMod.class);
+    }
+
     //Lexems
 
     boolean isLEOF(Lexem lexem) {
@@ -81,5 +85,17 @@ class HelperClassChecker {
 
     boolean isLIdent(Lexem lexem) {
         return isClass(lexem, LIdent.class);
+    }
+
+    public boolean isPercent(Lexem lexem) {
+        return isClass(lexem, LPercent.class);
+    }
+
+    public boolean shouldReduceMultiplicative(Operations lastOperation) {
+        return lastOperation.equals(Operations.STAR) || lastOperation.equals(Operations.SLASH);
+    }
+
+    public boolean shouldReduceModulo(Operations lastOperation) {
+        return lastOperation.equals(Operations.PROCENT);
     }
 }

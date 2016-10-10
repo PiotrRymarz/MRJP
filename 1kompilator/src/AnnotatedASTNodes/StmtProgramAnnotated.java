@@ -1,6 +1,7 @@
 package AnnotatedASTNodes;
 
 import ASTNodes.StmtProgram;
+import SyntaxTree.SymbolicTable;
 import interfaces.ASTNode;
 import interfaces.AnnotatedASTNode;
 
@@ -12,7 +13,7 @@ public class StmtProgramAnnotated extends StmtProgram implements AnnotatedASTNod
 
     public StmtProgramAnnotated(List<AnnotatedASTNode> statements) {
         super();
-        this.statements = new ArrayList<>(statements);;
+        this.statements = new ArrayList<>(statements);
     }
 
     @Override
@@ -31,4 +32,18 @@ public class StmtProgramAnnotated extends StmtProgram implements AnnotatedASTNod
 
         return maxChildHeight;
     }
+
+    @Override
+    public Integer getValue(SymbolicTable symbolicTable, Integer[] currentValues) {
+        Integer value = Integer.MIN_VALUE;
+
+        for (ASTNode stmt: getChildren()) {
+            AnnotatedASTNode annotatedStmt = (AnnotatedASTNode) stmt;
+
+            value = annotatedStmt.getValue(symbolicTable, currentValues);
+        }
+
+        return value;
+    }
+
 }

@@ -4,6 +4,7 @@ import ASTNodes.ExpConst;
 import ASTNodes.ExpVarRef;
 import AnnotatedASTNodes.*;
 import SemanticTree.AnnotatedAbstractSyntaxTree;
+import SemanticTree.SemanticParsingResult;
 import SyntaxTree.AbstractSyntaxTree;
 import SyntaxTree.SymbolicTable;
 import SyntaxTree.SyntaxParsingResult;
@@ -26,7 +27,7 @@ class SemanticAnalyzer1 implements SemanticAnalyzer {
     }
 
     @Override
-    public AnnotatedAbstractSyntaxTree getAnnotatedAST(SyntaxParsingResult syntaxParsingResult) {
+    public SemanticParsingResult getSemanticResult(SyntaxParsingResult syntaxParsingResult) {
         AnnotatedAbstractSyntaxTree annotatedAbstractSyntaxTree;
         abstractSyntaxTree = syntaxParsingResult.getAST();
         symbolicTable = syntaxParsingResult.getSymbolicTable();
@@ -38,7 +39,10 @@ class SemanticAnalyzer1 implements SemanticAnalyzer {
             annotatedStmts.add(getAnnotatedStmt(stmt, symbolicTable, variablesInitialized));
         }
 
-        return new AnnotatedAbstractSyntaxTree(annotatedStmts);
+        return new SemanticParsingResult(
+                new AnnotatedAbstractSyntaxTree(annotatedStmts),
+                symbolicTable
+        );
     }
 
     private AnnotatedASTNode getAnnotatedStmt(ASTNode stmt, SymbolicTable symbolicTable, boolean[] variablesInitialized) {
@@ -100,6 +104,8 @@ class SemanticAnalyzer1 implements SemanticAnalyzer {
             return getAnnotatedSub(exp, symbolicTable, variablesInitialized);
         } else if (helper.isExpVarRef(exp)) {
             return getAnnotatedVariableInExpression(exp, symbolicTable, variablesInitialized);
+        } else if (helper.isModulo(exp)) {
+            return getAnnotatedModulo(exp, symbolicTable, variablesInitialized);
         } else {
             throw new IllegalArgumentException("Can't assign : " + exp.toString() + " to a variable.");
         }
@@ -117,6 +123,17 @@ class SemanticAnalyzer1 implements SemanticAnalyzer {
         }
 
         return new ExpVarRefAnnotated(variableName);
+    }
+
+    private AnnotatedASTNode getAnnotatedModulo(ASTNode exp, SymbolicTable symbolicTable, boolean[] variablesInitialized) {
+        assertTwoChildren(exp);
+
+        List<ASTNode> children = exp.getChildren();
+
+        AnnotatedASTNode firstExp = getAnnotatedExpression(children.get(0), symbolicTable, variablesInitialized);
+        AnnotatedASTNode secondExp = getAnnotatedExpression(children.get(1), symbolicTable, variablesInitialized);
+
+        return new ExpModAnnotated(firstExp, secondExp);
     }
 
     private AnnotatedASTNode getAnnotatedMul(ASTNode exp, SymbolicTable symbolicTable, boolean[] variablesInitialized) {
@@ -177,20 +194,6 @@ class SemanticAnalyzer1 implements SemanticAnalyzer {
         variablesInitialized[symbolicTable.getValue(variableName)] = true;
 
         return new ExpVarRefAnnotated(variableName);
-    }
-
-    private void printStmt(ASTNode stmt) {
-
-        if (stmt.getClass() == ExpConst.class) {
-            System.out.println(((ExpConst)stmt).getValue());
-        } else if (stmt.getClass() == ExpVarRef.class) {
-            System.out.println(((ExpVarRef)stmt).getVariableName());
-        } else {
-            System.out.println(stmt.getClass());
-            for (ASTNode child : stmt.getChildren()) {
-                printStmt(child);
-            }
-        }
     }
 
     private void assertAssignmentCriteria(List<ASTNode> children) {

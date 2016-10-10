@@ -1,6 +1,7 @@
 package AnnotatedASTNodes;
 
 import ASTNodes.StmtAss;
+import SyntaxTree.SymbolicTable;
 import interfaces.ASTNode;
 import interfaces.AnnotatedASTNode;
 
@@ -28,5 +29,16 @@ public class StmtAssAnnotated extends StmtAss implements AnnotatedASTNode {
         }
 
         return maxChildHeight + 1;
+    }
+
+    @Override
+    public Integer getValue(SymbolicTable symbolicTable, Integer[] currentValues) {
+        ExpVarRefAnnotated variable = (ExpVarRefAnnotated) getChildren().get(0);
+        AnnotatedASTNode expression = (AnnotatedASTNode) getChildren().get(1);
+
+        Integer value = expression.getValue(symbolicTable, currentValues);
+        variable.setValue(value, symbolicTable, currentValues);
+
+        return value;    
     }
 }

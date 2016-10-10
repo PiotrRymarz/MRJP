@@ -1,6 +1,7 @@
 package SemanticTree;
 
 import AnnotatedASTNodes.StmtProgramAnnotated;
+import SyntaxTree.SymbolicTable;
 import interfaces.AnnotatedAST;
 import interfaces.AnnotatedASTNode;
 
@@ -32,5 +33,10 @@ public class AnnotatedAbstractSyntaxTree implements AnnotatedAST {
     @Override
     public Integer getHeight() {
         return root.getHeight();
+    }
+
+    @Override
+    public Integer getValue(SymbolicTable symbolicTable) {
+        return root.getValue(symbolicTable, new Integer[symbolicTable.size()]);
     }
 }

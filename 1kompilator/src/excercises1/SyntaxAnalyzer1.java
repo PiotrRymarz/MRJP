@@ -35,8 +35,15 @@ class SyntaxAnalyzer1 implements SyntaxAnalyzer {
         for (Lexem lexem : lexems) {
             if (helper.isLConst(lexem)) {
                 stack.add(new ExpConst(Integer.parseInt(lexem.getValue())));
+            } else if (helper.isPercent(lexem)) {
+
+                stack.add(new ExpMod());
+                lastOperation = Operations.PROCENT;
             } else if (helper.isLPlus(lexem)) {
-                if (lastOperation.equals(Operations.STAR) || lastOperation.equals(Operations.SLASH)) {
+                if (helper.shouldReduceModulo(lastOperation)) {
+                    lastOperation = reduceModulo(stack);
+                }
+                if (helper.shouldReduceMultiplicative(lastOperation)) {
                     lastOperation = reduceMultiplicative(stack);
                 }
                 stack.add(new ExpAdd());
@@ -75,12 +82,11 @@ class SyntaxAnalyzer1 implements SyntaxAnalyzer {
     }
 
 
-
-
     private void reduceStmt(Stack<ASTNode> stack, List<ASTNode> stmts) {
                 if (stack == null || stack.size() == 0) {
                         throw new UnsupportedOperationException("Can't reduce empty stack" + stack);
                     }
+        lastOperation = reduceModulo(stack);
         lastOperation = reduceMultiplicative(stack);
         lastOperation = reduceAdditive(stack);
         lastOperation = reduceStatements(stack);
@@ -91,6 +97,7 @@ class SyntaxAnalyzer1 implements SyntaxAnalyzer {
                 throw new UnsupportedOperationException("Reduced statement has size different to 1");
             }
     }
+
 
     private Operations reduceStatements(Stack<ASTNode> stack) {
         if (stack == null) {
@@ -132,7 +139,6 @@ class SyntaxAnalyzer1 implements SyntaxAnalyzer {
                 first = stack.pop();
                 second = stack.pop();
 
-
             if(helper.isAdd(second)) {
                 third = stack.pop();
                 stack.push(new ExpAdd(third, first));
@@ -142,7 +148,6 @@ class SyntaxAnalyzer1 implements SyntaxAnalyzer {
             } else {
                 stack.push(second);
                 stack.push(first);
-
                 return lastOperation;
             }
         }
@@ -151,8 +156,11 @@ class SyntaxAnalyzer1 implements SyntaxAnalyzer {
     }
 
     private Operations reduceMultiplicative(Stack<ASTNode> stack) {
-        if (stack == null || stack.size() < 3) {
-            throw new UnsupportedOperationException("Can't reduce empty stack as mul" + stack);
+        if (stack == null) {
+            throw new NullPointerException("stack is null");
+        }
+        if (stack.size() < 3) {
+            return lastOperation;
         }
         ASTNode first;
         ASTNode second;
@@ -168,25 +176,57 @@ class SyntaxAnalyzer1 implements SyntaxAnalyzer {
             } else if (helper.isDiv(second)) {
                 third = stack.pop();
                 stack.push(new ExpDiv(third, first));
-            } else if (helper.isAdd(second)) {
+            } else {
                 stack.push(second);
                 stack.push(first);
-
-                return Operations.PLUS;
-            } else if (helper.isSub(second)) {
-                stack.push(second);
-                stack.push(first);
-
-                return Operations.MINUS;
-            } else if (helper.isAssign(second)) {
-                stack.push(second);
-                stack.push(first);
-
-                return Operations.ASSIGNMENT;
+                return setOperation(second);
             }
         }
 
         return Operations.EMPTY;
+    }
+
+    private Operations reduceModulo(Stack<ASTNode> stack) {
+        if (stack == null) {
+            throw new NullPointerException("stack is null");
+        }
+        if (stack.size() < 3) {
+            return lastOperation;
+        }
+        ASTNode first;
+        ASTNode second;
+        ASTNode third;
+        //Reduce percent as long as possible
+        while ( stack.size() > 2) {
+            first = stack.pop();
+            second = stack.pop();
+
+            if (helper.isModulo(second)) {
+                third = stack.pop();
+                stack.push(new ExpMod(third, first));
+            } else {
+                stack.push(second);
+                stack.push(first);
+                return setOperation(second);
+            }
+        }
+
+        return Operations.EMPTY;
+    }
+
+    private Operations setOperation(ASTNode second) {
+        if (helper.isMul(second)) {
+            return Operations.STAR;
+        } else if (helper.isDiv(second)) {
+            return Operations.SLASH;
+        } else if (helper.isAdd(second)) {
+            return Operations.PLUS;
+        } else if (helper.isSub(second)) {
+            return Operations.MINUS;
+        } else if (helper.isAssign(second)) {
+            return Operations.ASSIGNMENT;
+        }
+        return lastOperation;
     }
 
 

@@ -285,4 +285,70 @@ public class SyntaxAnalyzer1Test {
         assertTrue(syntaxParsingResult.getSymbolicTable().size() == 1);
 
     }
+
+    /**
+     * SyntaxTree for
+     *  a = 1
+     *  a + 1 + 2 * 3 - 4 / 5 % 6
+     */
+    @Test
+    public void checkAST7() {
+        stmts.add(
+                new StmtAss(
+                        new ExpVarRef("a"),
+                        new ExpConst(1)
+                )
+        );
+        stmts.add(
+                new StmtExp(
+                    new ExpAdd(
+                        new ExpVarRef("a"),
+                        new ExpAdd(
+                            new ExpConst(1),
+                            new ExpSub(
+                                new ExpMul(
+                                    new ExpConst(2),
+                                    new ExpConst(3)
+                                ),
+                                new ExpDiv(
+                                    new ExpConst(4),
+                                    new ExpMod(
+                                        new ExpConst(5),
+                                        new ExpConst(6)
+                                    )
+                                )
+                            )
+                    )
+                )
+            )
+        );
+        expectedResult = new AbstractSyntaxTree(stmts);
+
+        lexems.add(new LIdent("a"));
+        lexems.add(new LEq());
+        lexems.add(new LConst("1"));
+        lexems.add(new LEOL());
+        lexems.add(new LIdent("a"));
+        lexems.add(new LPlus());
+        lexems.add(new LConst("1"));
+        lexems.add(new LPlus());
+        lexems.add(new LConst("2"));
+        lexems.add(new LStar());
+        lexems.add(new LConst("3"));
+        lexems.add(new LMinus());
+        lexems.add(new LConst("4"));
+        lexems.add(new LSlash());
+        lexems.add(new LConst("5"));
+        lexems.add(new LPercent());
+        lexems.add(new LConst("6"));
+        lexems.add(new LEOL());
+        lexems.add(new LEOF());
+
+
+        syntaxParsingResult = syntaxAnalyzer.getParsingResult(lexems);
+        AST tree = syntaxParsingResult.getAST();
+        assertTrue(tree.equals(expectedResult));
+        assertTrue(syntaxParsingResult.getSymbolicTable().size() == 1);
+
+    }
 }

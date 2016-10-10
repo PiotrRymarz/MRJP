@@ -1,10 +1,13 @@
 package AnnotatedASTNodes;
 
 import ASTNodes.ExpSub;
+import SyntaxTree.SymbolicTable;
 import interfaces.ASTNode;
 import interfaces.AnnotatedASTNode;
 
 public class ExpSubAnnotated extends ExpSub implements AnnotatedASTNode {
+
+    private Integer value;
 
     public ExpSubAnnotated(AnnotatedASTNode var1, AnnotatedASTNode var2) {
         super(var1, var2);
@@ -28,5 +31,18 @@ public class ExpSubAnnotated extends ExpSub implements AnnotatedASTNode {
         }
 
         return maxChildHeight + 1;
+    }
+
+
+    @Override
+    public Integer getValue(SymbolicTable symbolicTable, Integer[] currentValues) {
+        if (value == null) {
+            AnnotatedASTNode first = (AnnotatedASTNode) getChildren().get(0);
+            AnnotatedASTNode second = (AnnotatedASTNode) getChildren().get(1);
+
+            value = first.getValue(symbolicTable, currentValues) - second.getValue(symbolicTable, currentValues);
+        }
+
+        return value;
     }
 }
